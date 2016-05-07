@@ -11,27 +11,24 @@ define('DBPORT',8090);
 define('ONLYNEWDATA',true);
 define('DAILYLOGS',false);
 
-while(true)
+if(!IMPORT_OLD)
+    /* Prduction: */
+    follow(false);
+else
 {
-    if(!IMPORT_OLD)
-        /* Prduction: */
-        follow(false);
-    else
+	/* IMPORT_OLD data from 2010 to 2015 */
+	for($year=10;$year<16;$year++)
 	{
-		/* IMPORT_OLD data from 2010 to 2015 */
-		for($year=10;$year<16;$year++)
+		for($i=1;$i<13;$i++)
 		{
-			for($i=1;$i<13;$i++)
-			{
-				$month = ($i<10)?'0'.$i:$i;
-				follow($year.$month);
-			}
+			$month = ($i<10)?'0'.$i:$i;
+			follow($year.$month);
 		}
-		
-		return;
 	}
-        
+	
+	return;
 }
+
 
 function saveLastTime($time)
 {
@@ -82,7 +79,6 @@ function follow($forcedate=false)
 
         while ($d = fgets($fh))
         {
-            if(!IMPORT_OLD && date("y").date("m")!=$datestring) return;
             $d = trim($d);
             $a = explode(',', $d);
             $server =   str_replace('"','',$a[0]);
