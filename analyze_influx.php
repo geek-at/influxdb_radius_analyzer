@@ -25,8 +25,6 @@ else
 			follow($year.$month);
 		}
 	}
-	
-	return;
 }
 
 
