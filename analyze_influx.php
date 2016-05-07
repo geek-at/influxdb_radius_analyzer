@@ -9,12 +9,13 @@ define('DBNAME','radius');
 define('DBIP','192.168.1.117');
 define('DBPORT',8090);
 define('ONLYNEWDATA',true);
+define('DAILYLOGS',false);
 
 while(true)
 {
     if(!IMPORT_OLD)
         /* Prduction: */
-        follow(PATH.date("y").date("m").".log",date("y").date("m"));
+        follow(false);
     else
 	{
 		/* IMPORT_OLD data from 2010 to 2015 */
@@ -23,7 +24,7 @@ while(true)
 			for($i=1;$i<13;$i++)
 			{
 				$month = ($i<10)?'0'.$i:$i;
-				follow(PATH."$year$month.log",$year.$month);
+				follow($year.$month);
 			}
 		}
 		
@@ -39,10 +40,19 @@ function saveLastTime($time)
     fclose($fp);
 }
 
-function follow($file,$datestring=false)
+function follow($forcedate=false)
 {
-    if(!$datestring)
-        $datestring = date("y").date("m");
+    if(!$forcedate)
+    {
+        $datestring = DAILYLOGS?date("y").date("m").date("d"):date("y").date("m");
+        $file = PATH.$datestring.'.log';
+    }
+    else 
+    {
+        $datestring = $forcedate;
+        $file = PATH.$datestring.'.log';
+    }
+    
         
     if(ONLYNEWDATA)
     {
@@ -57,6 +67,14 @@ function follow($file,$datestring=false)
 			if(IMPORT_OLD){echo "[done]\n"; return;}
             usleep(100);
             continue;
+        }
+        
+        // renew datestring and file name so it will automatically
+        // choose the right file when the date changes
+        if(!$forcedate)
+        {
+            $datestring = DAILYLOGS?date("y").date("m").date("d"):date("y").date("m");
+            $file = PATH.$datestring.'.log';
         }
 
         $fh = fopen($file, "r");
@@ -85,7 +103,7 @@ function follow($file,$datestring=false)
             $ap_host =  str_replace('"','',$a[11]);
             $ap_ip =    str_replace('"','',$a[15]);
             $ap_radname=strtolower(str_replace('"','',substr($a[16], 0,5)));
-            $ap_radname_full=strtolower(str_replace('"','',str_replace(' ','_',$a[16])));
+            $ap_radname_full= strtolower(str_replace('"','',sanatizeStringForInflux($a[16])));
             $speed =    str_replace('"','',$a[20]);
             $policy =   str_replace('"','',$a[60]);
             $auth =   translateAuth(str_replace('"','',$a[23]));
@@ -123,6 +141,9 @@ function follow($file,$datestring=false)
 				$origin_client = $origin;
 
 			$influxtime = $timestamp.'000000000';
+            
+            $OU = sanatizeStringForInflux($OU);
+            $origin_client = sanatizeStringForInflux($origin_client);
 
 
             switch($type)
@@ -182,4 +203,14 @@ function sendToDB($data,$time=false)
 	$socket = stream_socket_client("udp://".DBIP.":".DBPORT);
 	stream_socket_sendto($socket, $data.(USERADIUSTIME?' '.$time:''));
 	stream_socket_shutdown($socket, STREAM_SHUT_RDWR);
+}
+
+
+function sanatizeStringForInflux($string)
+{
+    $string = trim($string);
+    $string = str_replace(',','\\,',$string);
+    $string = str_replace(' ','\\ ',$string);
+    $string = str_replace('=','\\=',$string);
+    return $string;
 }
