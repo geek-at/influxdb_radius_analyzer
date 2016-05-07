@@ -1,6 +1,7 @@
 <?php
 require_once 'radius_functions.php';
 date_default_timezone_set('Europe/Vienna');
+error_reporting(E_ALL & ~E_NOTICE);
 
 define('IMPORT_OLD',false);
 define('USERADIUSTIME',true);
