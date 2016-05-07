@@ -1,5 +1,7 @@
 # InfluxDB RADIUS Analyzer
 
+![Example grafana log](https://www.pictshare.net/800/22ca68ad0e.jpg)
+
 Compatible with all versions of InfluxDB since it uses UDP and the line protocol.
 
 ## Updating
