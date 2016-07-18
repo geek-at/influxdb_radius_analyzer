@@ -155,6 +155,7 @@ function follow($forcedate=false)
                     //making sure all tag values are set and if not, set them to "0"
 					$client_mac = ($client_mac?$client_mac:'0');
                     $ap_radname_full = ($ap_radname_full?$ap_radname_full:'0');
+                    $origin_client = ($origin_client?$origin_client:'0');
 
 					sendToDB(DBNAME.",type=request,ap=$ap_radname_full,special=$client_mac,special_type=mac value=\"$origin_client\",special=\"$client_mac\"",$influxtime);
                 break;
@@ -165,6 +166,7 @@ function follow($forcedate=false)
                     //making sure all tag values are set and if not, set them to "0"
                     $OU = ($OU?$OU:'0');
                     $ap_radname_full = ($ap_radname_full?$ap_radname_full:'0');
+                    $origin_client = ($origin_client?$origin_client:'0');
 
                     sendToDB(DBNAME.",type=accept,ap=$ap_radname_full,special=$OU,special_type=OU value=\"$origin_client\"",$influxtime);
                 break;
@@ -175,6 +177,8 @@ function follow($forcedate=false)
                     //making sure all tag values are set and if not, set them to "0"
                     $ap_radname_full = ($ap_radname_full?$ap_radname_full:'0');
                     $reason = ($reason?$reason:'0');
+                    $origin_client = ($origin_client?$origin_client:'0');
+                    $rs = ($rs?$rs:'0');
                     sendToDB(DBNAME.",type=rejected,ap=$ap_radname_full,special=$reason,special_type=reason value=\"$origin_client\",special_val=\"$rs\"",$influxtime);
                 break;
 
