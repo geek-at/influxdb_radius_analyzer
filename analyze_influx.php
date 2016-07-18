@@ -151,17 +151,30 @@ function follow($forcedate=false)
                     
                     $requests[$origin_client.$ap_radname_full]=$timestamp;
                     //echo date("d.m H:I:s",$timestamp).": $origin_client trying to connect via $ap_radname_full\n";
-					
+
+                    //making sure all tag values are set and if not, set them to "0"
+					$client_mac = ($client_mac?$client_mac:'0');
+                    $ap_radname_full = ($ap_radname_full?$ap_radname_full:'0');
+
 					sendToDB(DBNAME.",type=request,ap=$ap_radname_full,special=$client_mac,special_type=mac value=\"$origin_client\",special=\"$client_mac\"",$influxtime);
                 break;
 
                 case 2: //Accepted
                     //echo "$origin_client is accepted on $ap_radname_full\n\n";
+
+                    //making sure all tag values are set and if not, set them to "0"
+                    $OU = ($OU?$OU:'0');
+                    $ap_radname_full = ($ap_radname_full?$ap_radname_full:'0');
+
                     sendToDB(DBNAME.",type=accept,ap=$ap_radname_full,special=$OU,special_type=OU value=\"$origin_client\"",$influxtime);
                 break;
 
                 case 3: //Rejected
                     //echo "$origin_client is rejected because: $rs\n\n";
+                    
+                    //making sure all tag values are set and if not, set them to "0"
+                    $ap_radname_full = ($ap_radname_full?$ap_radname_full:'0');
+                    $reason = ($reason?$reason:'0');
                     sendToDB(DBNAME.",type=rejected,ap=$ap_radname_full,special=$reason,special_type=reason value=\"$origin_client\",special_val=\"$rs\"",$influxtime);
                 break;
 
