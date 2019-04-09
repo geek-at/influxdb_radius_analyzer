@@ -117,23 +117,32 @@ function follow($forcedate=false)
 			else if(strpos($origin,'/'))
 				$ab = explode('/',$origin);
 				
-			if(count($ab)==4)
-			{
-				$origin_client = $ab[3];
-				$OU = $ab[2];
-			}
-			else if(count($ab)==3)
-			{
-				$origin_client = $ab[2];
-				$OU = $ab[1];
-			}
-			else if(count($ab)==2)
-			{
-				$origin_client = $ab[1];
-				$OU = $ab[0];
-			}
+			if(is_array($ab){
+				
+				if(count($ab)==4)
+				{
+					$origin_client = $ab[3];
+					$OU = $ab[2];
+				}
+				else if(count($ab)==3)
+				{
+					$origin_client = $ab[2];
+					$OU = $ab[1];
+				}
+				else if(count($ab)==2)
+				{
+					$origin_client = $ab[1];
+					$OU = $ab[0];
+				}
+				else {
+					$origin_client = $origin;
+				}
+				
+			} 
 			else
+			{
 				$origin_client = $origin;
+			}
 
 			$influxtime = $timestamp.'000000000';
             
@@ -144,7 +153,7 @@ function follow($forcedate=false)
             switch($type)
             {
                 case 1: //Requesting access
-                    if($requests[$origin_client.$ap_radname_full]==$timestamp) continue;
+                    if($requests[$origin_client.$ap_radname_full]==$timestamp) continue 2;
 					
 					$s = explode(' ',$speed);
 					$speed = $s[1];
