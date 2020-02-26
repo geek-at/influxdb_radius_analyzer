@@ -117,7 +117,7 @@ function follow($forcedate=false)
 			else if(strpos($origin,'/'))
 				$ab = explode('/',$origin);
 				
-			if(is_array($ab){
+			if(is_array($ab)){
 				
 				if(count($ab)==4)
 				{
